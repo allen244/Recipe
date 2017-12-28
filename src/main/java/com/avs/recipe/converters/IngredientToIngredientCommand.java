@@ -1,4 +1,5 @@
 package com.avs.recipe.converters;
+
 import com.avs.recipe.commands.IngredientCommand;
 import com.avs.recipe.domain.Ingredient;
 import lombok.Synchronized;
@@ -28,9 +29,13 @@ public class IngredientToIngredientCommand implements Converter<Ingredient, Ingr
 
         IngredientCommand ingredientCommand = new IngredientCommand();
         ingredientCommand.setId(ingredient.getIngredientId());
+        if (ingredient.getRecipe() != null) {
+            ingredientCommand.setRecipeId(ingredient.getRecipe().getRecipeId());
+        }
         ingredientCommand.setAmount(ingredient.getAmount());
         ingredientCommand.setDescription(ingredient.getDescription());
         ingredientCommand.setUom(uomConverter.convert(ingredient.getUom()));
         return ingredientCommand;
     }
+
 }
