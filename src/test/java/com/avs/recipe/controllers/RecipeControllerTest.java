@@ -2,6 +2,7 @@ package com.avs.recipe.controllers;
 
 import com.avs.recipe.commands.RecipeCommand;
 import com.avs.recipe.domain.Recipe;
+import com.avs.recipe.exceptions.NotFoundException;
 import com.avs.recipe.repositories.RecipeRepository;
 import com.avs.recipe.services.RecipeService;
 import com.avs.recipe.services.RecipeServiceImpl;
@@ -44,7 +45,7 @@ public class RecipeControllerTest {
         MockitoAnnotations.initMocks(this);
 
         controller = new RecipeController(recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new ControllerExceptionHandler()).build();
     }
 
     @Test
@@ -107,6 +108,27 @@ public class RecipeControllerTest {
                 .andExpect(view().name("redirect:/"));
 
         verify(recipeService, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    public void testGetRecipeNotFound() throws Exception {
+
+        when(recipeService.findById(anyLong())).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/1/show"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+    }
+
+
+    @Test
+    public void testGetRecipeNumberFormat() throws Exception {
+
+       // when(recipeService.findById(anyLong())).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/asdf/show"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"));
     }
 }
 
