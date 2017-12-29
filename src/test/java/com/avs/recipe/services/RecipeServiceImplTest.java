@@ -3,6 +3,7 @@ package com.avs.recipe.services;
 import com.avs.recipe.converters.RecipeCommandToRecipe;
 import com.avs.recipe.converters.RecipeToRecipeCommand;
 import com.avs.recipe.domain.Recipe;
+import com.avs.recipe.exceptions.NotFoundException;
 import com.avs.recipe.repositories.RecipeRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -68,6 +70,7 @@ public class RecipeServiceImplTest {
         verify(recipeRepository, times(1)).findAll();
         verify(recipeRepository, never()).findById(anyLong());
     }
+
     @Test
     public void testDeleteById() throws Exception {
 
@@ -81,5 +84,18 @@ public class RecipeServiceImplTest {
 
         //then
         verify(recipeRepository, times(1)).deleteById(anyLong());
+    }
+
+
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound() throws Exception {
+
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(1L);
+
+        //should go boom
     }
 }

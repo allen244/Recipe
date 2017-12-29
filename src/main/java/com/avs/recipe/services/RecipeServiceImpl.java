@@ -2,6 +2,7 @@ package com.avs.recipe.services;
 
 import com.avs.recipe.commands.RecipeCommand;
 import com.avs.recipe.domain.Recipe;
+import com.avs.recipe.exceptions.NotFoundException;
 import com.avs.recipe.repositories.RecipeRepository;
 import com.avs.recipe.converters.RecipeCommandToRecipe;
 import com.avs.recipe.converters.RecipeToRecipeCommand;
@@ -40,7 +41,8 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe findById(Long id) {
         Optional<Recipe> recipe = recipeRepository.findById(id);
         if (!recipe.isPresent()) {
-            throw new RuntimeException("Recipe Not Found!");
+            //throw new RuntimeException("Recipe Not Found!");
+            throw new NotFoundException("Recipe Not Found");
         }
         return recipe.get();
     }
